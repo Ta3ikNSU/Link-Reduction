@@ -1,0 +1,15 @@
+version: '3'
+services:
+  oracle:
+    image: oracle/database:12.2.0.1-ee
+    ports:
+      - "1521:1521"
+    environment:
+      - ORACLE_PWD=oracle
+      - ORACLE_CHARACTERSET=AL32UTF8
+      - ORACLE_SID=oracle
+    healthcheck:
+      test: [ "CMD", "sqlplus", "-L", "sys/Oracle_123@//localhost:1521/ORCLCDB as sysdba", "@healthcheck.sql" ]
+      interval: 30s
+      timeout: 10s
+      retries: 5
