@@ -2,16 +2,27 @@ package ta3ik.linkreduction.service;
 
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Component;
+import ta3ik.linkreduction.model.entity.Link;
+import ta3ik.linkreduction.model.repository.LinkRepository;
 
 import javax.annotation.PostConstruct;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicLong;
 
 @Component
 @Slf4j
 public class KeyGenerator {
+
+    @Autowired
+    private LinkRepository linkRepository;
+
     @PostConstruct
     public void init() {
+        Optional<Link> link = linkRepository.findTopByOrderByIdDesc();
+        atomicLong.set(link.map(value -> value.getId() + 1).orElse(0L));
         maxValue = pow(alphabet.length(), 6);
     }
     private final AtomicLong atomicLong = new AtomicLong(0);
@@ -19,12 +30,13 @@ public class KeyGenerator {
     private final String alphabet = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
     private Long maxValue;
 
-    public String nextKey() {
+    public Pair<Long, String> nextIdWithKey() {
+        long id = atomicLong.getAndIncrement();
         atomicLong.compareAndSet(maxValue, 0);
         log.info("Atomic long: {}", atomicLong.get());
-        String key = numberToChar(atomicLong.getAndIncrement());
+        String key = numberToChar(id);
         log.info("Key generated: {}", key);
-        return key;
+        return Pair.of(id, key);
     }
 
     private String numberToChar(long number) {
