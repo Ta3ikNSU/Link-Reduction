@@ -1,27 +1,27 @@
 package ta3ik.linkreduction.model.entity;
 
-import jakarta.persistence.*;
 import lombok.*;
+import javax.persistence.*;
 
 @Getter
 @Setter
 @Entity
-@Table(name = "link")
 @ToString
 @NoArgsConstructor
 public class Link {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", nullable = true)
-    private Long id;
+    @Column(name = "ID")
+    Long id;
 
-    @Column(name = "key", nullable = true)
-    private String key;
+    @Column(name = "KEY", nullable = false)
+    String key;
 
-    @Column(name = "url", nullable = false)
-    private String url;
+    @Column(name = "URL", nullable = false)
+    String url;
 
-    public Link(String url) {
+    public Link(String key, String url) {
+        this.key = key;
         this.url = url;
     }
 }

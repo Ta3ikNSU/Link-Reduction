@@ -1,9 +1,7 @@
 plugins {
     id 'java'
-    id 'org.springframework.boot' version '3.0.6'
+    id 'org.springframework.boot' version '2.7.9'
     id 'io.spring.dependency-management' version '1.1.0'
-    id "org.openapi.generator" version "6.0.1"
-    id "org.springdoc.openapi-gradle-plugin" version "1.6.0"
 }
 
 group = 'ta3ik'
@@ -35,14 +33,12 @@ dependencies {
     implementation 'com.fasterxml.jackson.core:jackson-annotations:2.14.0'
     implementation 'io.swagger.core.v3:swagger-annotations:2.2.8'
     implementation 'io.swagger.core.v3:swagger-models:2.2.9'
-    implementation 'org.openapitools:jackson-databind-nullable:0.2.6'
     implementation 'com.mysql:mysql-connector-j:8.0.33'
-    implementation 'org.mapstruct:mapstruct:1.4.2.Final'
-    annotationProcessor 'org.mapstruct:mapstruct-processor:1.4.2.Final'
+    implementation 'org.springdoc:springdoc-openapi-ui:1.7.0'
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
 
     compileOnly 'org.projectlombok:lombok'
     compileOnly 'javax.servlet:servlet-api:2.5'
-    compileOnly("org.openapitools:openapi-generator-gradle-plugin:6.5.0")
 
     runtimeOnly 'com.oracle.database.jdbc:ojdbc8'
 
@@ -60,14 +56,6 @@ dependencyManagement {
     }
 }
 
-sourceSets {
-    main {
-        java {
-            srcDir("${buildDir.absolutePath}/generated/src/main/java")
-        }
-    }
-}
-
 
 tasks.named('test') {
     useJUnitPlatform()
@@ -75,24 +63,4 @@ tasks.named('test') {
 
 tasks.withType(JavaCompile).configureEach {
     dependsOn(tasks.clean)
-    dependsOn(tasks.openApiGenerate)
-    source("$buildDir/generated/src/main/java")
-}
-
-compileJava.dependsOn tasks.named("openApiGenerate")
-
-compileJava {
-    options.annotationProcessorPath = configurations.compileClasspath
-    options.compilerArgs += ["-Amapstruct.defaultComponentModel=spring"]
-}
-
-openApiGenerate {
-    generatorName = "spring"
-    inputSpec = "$rootDir/api-spec/api.yml".toString()
-    outputDir = "$buildDir/generated".toString()
-    apiPackage = "linkreduction.api"
-    modelPackage = "linkreduction.model"
-    configOptions = [
-            delegatePattern: "true"
-    ]
 }
