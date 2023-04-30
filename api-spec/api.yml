@@ -1,7 +1,7 @@
 openapi: "3.0.0"
 info:
   title: Link Reduction API
-  version: 2.0.0
+  version: 1.0.0
 paths:
   /link:
     post:
@@ -13,14 +13,14 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/Link"
+              $ref: "#/components/schemas/LinkDTO"
       responses:
-        "201":
+        "200":
           description: Created
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Link"
+                $ref: "#/components/schemas/LinkDTO"
         "400":
           description: Bad Request
           content:
@@ -35,18 +35,17 @@ paths:
                 $ref: "#/components/schemas/Message"
 components:
   schemas:
-    Link:
+    LinkDTO:
       type: object
+      required:
+        - url
       properties:
         url:
           type: string
-          format: uri
-      required:
-        - url
     Message:
       type: object
+      required:
+        - message
       properties:
         message:
           type: string
-      required:
-        - message
