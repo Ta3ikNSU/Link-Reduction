@@ -5,11 +5,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ta3ik.linkreduction.api.DTO.LinkDTO;
+import ta3ik.linkreduction.model.exception.LinkNotFoundException;
 import ta3ik.linkreduction.service.LinkReductionService;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-
 
 @RestController
 @Slf4j
@@ -25,8 +25,10 @@ public class LinkReductionController {
     }
 
     @GetMapping("/{key}")
-    public void getLink(@PathVariable String key, HttpServletResponse response) throws IOException {
-        log.info("Received redirect to: {}", key);
-        response.sendRedirect("https://" + linkReductionService.getShortLink(key));
+    public void getLink(@PathVariable String key, HttpServletResponse response) throws LinkNotFoundException, IOException {
+        log.info("Key received: {}", key);
+        String url = linkReductionService.getShortLink(key);
+        log.info("Redirecting to: {}", url);
+        response.sendRedirect(url);
     }
 }

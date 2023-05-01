@@ -11,6 +11,13 @@ import org.springframework.security.web.SecurityFilterChain;
 public class SecurityConfig{
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        return http.cors().disable().csrf().disable().authorizeRequests().anyRequest().permitAll().and().build();
+        http.cors().disable().csrf().disable()
+                .exceptionHandling()
+                .and().authorizeRequests()
+                .antMatchers("/create").permitAll()
+                .antMatchers("/**").permitAll()
+                .antMatchers("/swagger-ui/**").permitAll()
+                .anyRequest().authenticated();
+        return http.build();
     }
 }

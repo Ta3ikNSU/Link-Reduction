@@ -19,22 +19,25 @@ public class KeyGenerator {
     @Autowired
     private LinkRepository linkRepository;
 
+    private static final int MAX_KEY_LENGTH = 5;
+
+    private final AtomicLong atomicLong = new AtomicLong(0);
+
+    private final String alphabet = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+
+    private Long maxValue;
+
     @PostConstruct
     public void init() {
         Optional<Link> link = linkRepository.findTopByOrderByIdDesc();
         atomicLong.set(link.map(value -> value.getId() + 1).orElse(0L));
-        maxValue = pow(alphabet.length(), 6);
+        maxValue = pow(alphabet.length(), MAX_KEY_LENGTH);
     }
-    private final AtomicLong atomicLong = new AtomicLong(0);
-
-    private final String alphabet = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
-    private Long maxValue;
 
     public Pair<Long, String> nextIdWithKey() {
         long id = atomicLong.getAndIncrement();
-        atomicLong.compareAndSet(maxValue, 0);
         log.info("Atomic long: {}", atomicLong.get());
-        String key = numberToChar(id);
+        String key = numberToChar(id % maxValue);
         log.info("Key generated: {}", key);
         return Pair.of(id, key);
     }
@@ -42,12 +45,12 @@ public class KeyGenerator {
     private String numberToChar(long number) {
         StringBuilder sb = new StringBuilder();
         while (number > 0) {
-            long remainder = number % 52;
+            long remainder = number % alphabet.length();
             sb.append(alphabet.charAt((int)remainder));
-            number /= 52;
+            number /= alphabet.length();
         }
         if (sb.length() == 0) {
-            sb.append('a');
+            sb.append(alphabet.charAt(0));
         }
         return sb.reverse().toString();
     }
@@ -66,5 +69,4 @@ public class KeyGenerator {
             return halfExp * halfExp * base;
         }
     }
-
 }

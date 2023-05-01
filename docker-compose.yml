@@ -1,0 +1,26 @@
+version: '3'
+services:
+  link-reduction-service:
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    depends_on:
+      oracle-db:
+        condition: service_healthy
+  oracle-db:
+    image: container-registry.oracle.com/database/free:latest
+    container_name: oracle-db
+    command: bash -c "/opt/oracle/runOracle.sh"
+    ports:
+      - "1521:1521"
+    environment:
+      - ORACLE_PWD=password
+    volumes:
+      - ./scripts:/scripts
+    healthcheck:
+      test: [ "CMD-SHELL", "echo 'SELECT 1 FROM DUAL;' | su oracle -c 'sqlplus -S myuser/mypassword as sysdba' | grep '1'" ]
+      interval: 1s
+      timeout: 1s
+      retries: 1000
