@@ -23,15 +23,14 @@ public class KeyGenerator {
 
     private final AtomicLong atomicLong = new AtomicLong(0);
 
-    private final String alphabet = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    private static final String alphabet = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
-    private Long maxValue;
+    private static Long maxValue = pow(alphabet.length(), MAX_KEY_LENGTH);
 
     @PostConstruct
     public void init() {
         Optional<Link> link = linkRepository.findTopByOrderByIdDesc();
         atomicLong.set(link.map(value -> value.getId() + 1).orElse(0L));
-        maxValue = pow(alphabet.length(), MAX_KEY_LENGTH);
     }
 
     public Pair<Long, String> nextIdWithKey() {
@@ -55,7 +54,7 @@ public class KeyGenerator {
         return sb.reverse().toString();
     }
 
-    private long pow(long base, long exp) {
+    private static long pow(long base, long exp) {
         if (exp == 0) {
             return 1;
         }

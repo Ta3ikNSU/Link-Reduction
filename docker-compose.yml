@@ -19,8 +19,3 @@ services:
       - ORACLE_PWD=password
     volumes:
       - ./scripts:/scripts
-    healthcheck:
-      test: [ "CMD-SHELL", "echo 'SELECT 1 FROM DUAL;' | su oracle -c 'sqlplus -S myuser/mypassword as sysdba' | grep '1'" ]
-      interval: 1s
-      timeout: 1s
-      retries: 1000

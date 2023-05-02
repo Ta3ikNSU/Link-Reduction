@@ -13,7 +13,7 @@ import java.util.Optional;
 
 @Service
 @Slf4j
-public class LinkReductionService {
+public class ShortLinkService {
 
     @Autowired
     private LinkRepository linkRepository;

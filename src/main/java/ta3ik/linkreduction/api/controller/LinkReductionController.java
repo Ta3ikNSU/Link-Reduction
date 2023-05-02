@@ -6,7 +6,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ta3ik.linkreduction.api.DTO.LinkDTO;
 import ta3ik.linkreduction.model.exception.LinkNotFoundException;
-import ta3ik.linkreduction.service.LinkReductionService;
+import ta3ik.linkreduction.service.ShortLinkService;
+import ta3ik.linkreduction.service.RedirectionService;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -16,7 +17,10 @@ import java.io.IOException;
 public class LinkReductionController {
 
     @Autowired
-    private LinkReductionService linkReductionService;
+    private ShortLinkService linkReductionService;
+
+    @Autowired
+    private RedirectionService redirectionService;
 
     @PostMapping("/create")
     public ResponseEntity<LinkDTO> createLink(@RequestBody LinkDTO link) {
@@ -27,8 +31,8 @@ public class LinkReductionController {
     @GetMapping("/{key}")
     public void getLink(@PathVariable String key, HttpServletResponse response) throws LinkNotFoundException, IOException {
         log.info("Key received: {}", key);
-        String url = linkReductionService.getShortLink(key);
-        log.info("Redirecting to: {}", url);
+        String url = redirectionService.getRedirectUrl(key);
+        log.info("Redirecting by key {} to: {}", key, url);
         response.sendRedirect(url);
     }
 }
